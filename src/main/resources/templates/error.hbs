@@ -1,0 +1,13 @@
+{{#partial "styles"}}
+    <link rel="stylesheet" href="/static/css/error.css">
+{{/partial}}
+
+{{#partial "contenido"}}
+    <div class="container error-container">
+        <div class="error-code">{{codigo}}</div>
+        <h1 class="error-message">{{mensaje}}</h1>
+        <a href="/" class="btn btn-primary mt-4">Volver al inicio</a>
+    </div>
+{{/partial}}
+
+{{>templates/layout}}

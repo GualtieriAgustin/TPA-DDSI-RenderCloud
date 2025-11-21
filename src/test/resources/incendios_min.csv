@@ -1,0 +1,9 @@
+titulo;descripcion;categoria;latitud;longitud;fecha_hecho
+20001-Incendio forestal;En Bariloche, Río Negro, ocurrió un incendio forestal que afectó 50 hectáreas de bosque nativo.;Forestal;-41;-71;15/1/2022 14:00:00
+20002-Incendio estructural;En Córdoba, Córdoba, ocurrió un incendio en un edificio residencial de 10 pisos.;Estructural;-31;-64;20/2/2022 18:30:00
+20003-Incendio vehicular;En Rosario, Santa Fe, ocurrió un incendio en un autobús de transporte público.;Vehicular;-32;-60;5/3/2022 08:15:00
+20004-Incendio industrial;En Zárate, Buenos Aires, ocurrió un incendio en una planta química que liberó gases tóxicos.;Industrial;-34;-59;12/4/2022 22:45:00
+20005-Incendio forestal;En Salta, Salta, ocurrió un incendio forestal que afectó 100 hectáreas de pastizales.;Forestal;-25;-65;30/5/2022 10:00:00
+20006-Incendio estructural;En Mendoza, Mendoza, ocurrió un incendio en un mercado mayorista.;Estructural;-32;-68;18/6/2022 16:30:00
+20007-Incendio vehicular;En Neuquén, Neuquén, ocurrió un incendio en un camión cisterna que transportaba combustible.;Vehicular;-39;-68;25/7/2022 12:00:00
+20008-Incendio industrial;En San Nicolás, Buenos Aires, ocurrió un incendio en una fábrica de plásticos.;Industrial;-33;-60;10/8/2022 19:15:00

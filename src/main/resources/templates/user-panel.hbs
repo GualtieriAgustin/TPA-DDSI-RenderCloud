@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Roboto, Arial, sans-serif;
+            background: #f7f8fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #user-panel {
+            width: 400px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #user-panel h2 {
+            text-align: center;
+            color: #2c3e50;
+            font-weight: 600;
+            margin: 25px 0 15px;
+            font-size: 1.6em;
+            border-bottom: 2px solid #0078d7;
+            padding-bottom: 12px;
+            width: 80%;
+            align-self: center;
+        }
+
+        #user-info {
+            display: flex;
+            flex-direction: column;
+            padding: 20px 30px;
+        }
+
+        .info-group {
+            margin-bottom: 18px;
+        }
+
+        .info-group label {
+            display: block;
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .info-group span {
+            display: block;
+            font-size: 1em;
+            color: #2c3e50;
+            background: #f0f2f5;
+            padding: 10px 12px;
+            border: 1px solid #cbd0d6;
+            border-radius: 6px;
+        }
+
+        /* Botones */
+        #user-actions {
+            display: flex;
+            flex-direction: column;
+            padding: 0 30px 25px 30px;
+        }
+
+        /* 1. Estilo base para botones y enlaces que parecen botones */
+        #user-actions .btn {
+            border: none;
+            border-radius: 6px;
+            padding: 12px 0;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+            text-align: center;
+            text-decoration: none; /* Asegura que los enlaces no tengan subrayado */
+            display: block; /* Asegura que los enlaces ocupen todo el ancho */
+        }
+
+        /* 2. Estilo para botones primarios (azules) */
+        #user-actions .btn.primary {
+            background-color: #0078d7;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0, 120, 215, 0.3);
+        }
+
+        #user-actions .btn.primary:hover {
+            background-color: #005fa3;
+            box-shadow: 0 4px 12px rgba(0, 120, 215, 0.5);
+            transform: translateY(-1px);
+        }
+
+        /* 3. Estilo para botones secundarios (grises) */
+        #user-actions .btn.secondary {
+            background-color: #e1e5ea;
+            color: #333;
+        }
+
+        #user-actions .btn.secondary:hover {
+            background-color: #d0d4d9;
+        }
+
+        /* Estilo específico para el botón de admin, que ya viene de navbar.hbs */
+        #user-actions a.login-btn {
+            background-color: #0078d7;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0, 120, 215, 0.3);
+            border: none;
+            border-radius: 6px;
+            padding: 12px 0;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+            text-align: center;
+            text-decoration: none; /* Asegura que los enlaces no tengan subrayado */
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div id="user-panel">
+    <h2>Perfil de Usuario</h2>
+    <div id="user-info">
+        <div class="info-group">
+            <label>Nombre completo:</label>
+            <span>{{fullname}}</span>
+        </div>
+        <div class="info-group">
+            <label>Correo electrónico:</label>
+            <span>{{email}}</span>
+        </div>
+        <div class="info-group">
+            <label>Nombre de usuario:</label>
+            <span>{{username}}</span>
+        </div>
+    </div>
+    <div id="user-actions">
+        <button id="edit-profile" class="btn primary">Editar perfil</button>
+        <button id="logout" class="btn secondary">Cerrar sesión</button>
+        {{#if admin}}
+            <a href="/user/admin" class="login-btn">Panel de administración</a>
+        {{/if}}
+        <a href="{{backUrl}}" class="btn secondary">Volver</a>
+    </div>
+</div>
+</body>
+</html>
+<script>
+    document.getElementById("logout").addEventListener("click", function() {
+        // Redirige a la ruta de logout del servidor
+        window.location.href = "/logout";
+    });
+    document.getElementById("edit-profile").addEventListener("click", function() {
+        window.location.href = "/edit-profile";
+    })
+</script>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Bug code="CN_IMPLEMENTS_CLONE_BUT_NOT_CLONEABLE"/>
+    </Match>
+    <Match>
+        <Class name="ar.edu.utn.frba.dds.dominio.solicitudes.SolicitudHecho"/>
+        <Bug code="EI_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <Bug code="EI_EXPOSE_REP2"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="ar.edu.utn.frba.dds.dominio.estadisticas.ExportadorCsv"/>
+    </Match>
+    <Match>
+      <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+    </Match>
+  <Match>
+    <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
+  </Match>
+  <Match>
+    <Class name="ar.edu.utn.frba.dds.controlador.SessionController"/>
+  </Match>
+  <Match>
+    <Class name="ar.edu.utn.frba.dds.dominio.hechos.Hecho"/>
+  </Match>
+</FindBugsFilter>

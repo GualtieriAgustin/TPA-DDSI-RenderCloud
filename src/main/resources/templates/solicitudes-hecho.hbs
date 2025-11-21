@@ -1,0 +1,112 @@
+{{#partial "styles"}}
+    <link rel="stylesheet" href="/static/css/form-hecho.css">
+{{/partial}}
+
+{{#partial "contenido"}}
+    <div class="container mt-5 mb-5">
+        <h2 class="mb-4">Crear una solicitud</h2>
+
+        <!-- Selector de tipo de solicitud -->
+        <div class="mb-4">
+            <label for="tipo-solicitud" class="form-label">Tipo de solicitud</label>
+            <select id="tipo-solicitud" class="form-select">
+                <option value="baja" selected>Solicitud de baja de hecho</option>
+                <option value="modificacion" disabled>Solicitud de modificación (Próximamente)</option>
+            </select>
+        </div>
+
+        <!-- Contenedor para el formulario de Solicitud de Baja -->
+        <div id="form-baja">
+            <form action="/solicitudes" method="post" hx-post="/solicitudes" hx-target="#feedback-solicitud" hx-swap="innerHTML">
+                <!-- Campo oculto para identificar el tipo de solicitud en el backend -->
+                <input type="hidden" name="tipo_solicitud" value="BAJA">
+
+                <div class="card bg-light mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Hecho a dar de baja</h5>
+                        <div class="mb-3">
+                            <label for="titulo_hecho" class="form-label">Título del hecho</label>
+                            <input type="text" class="form-control" id="titulo_hecho" name="titulo_hecho" value="{{titulo_hecho}}" readonly required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descripcion_hecho" class="form-label">Descripción del hecho</label>
+                            <textarea class="form-control" id="descripcion_hecho" name="descripcion_hecho" rows="3" readonly required>{{descripcion_hecho}}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="provincia_hecho" class="form-label">Provincia del hecho</label>
+                            <input type="text" class="form-control" id="provincia_hecho" name="provincia_hecho" value="{{provincia_hecho}}" readonly required>
+                            <input type="hidden" name="provincia_hecho_value" value="{{provincia_hecho_value}}">
+                        </div>
+                        {{#unless titulo_hecho}}
+                            <small class="form-text text-muted">
+                                Por ahora, se solicita la baja por título, descripción y provincia. En el futuro se podrán definir criterios más complejos.
+                            </small>
+                        {{/unless}}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="justificacion" class="form-label">Justificación</label>
+                    <textarea class="form-control" minlength="500" maxlength="1000" id="justificacion"
+                              name="justificacion" rows="4"
+                              placeholder="Explique por qué se debe dar de baja este hecho..." required></textarea>
+                </div>
+
+                <!-- Campo oculto para el ID del usuario. Cuando tengas login, aquí deberías poner el ID del usuario logueado -->
+                <input type="hidden" name="usuarioId" value="">
+
+                <button type="submit" class="btn btn-danger">Enviar solicitud de baja</button>
+            </form>
+        </div>
+
+        <!-- Contenedor para el futuro formulario de Solicitud de Modificación (oculto por ahora) -->
+        <div id="form-modificacion" style="display: none;">
+            <!-- Aquí iría el formulario para SolicitudModificacionHecho -->
+            <p>El formulario para modificar hechos estará disponible próximamente.</p>
+        </div>
+
+        <!-- Modal de Feedback (oculto por defecto) -->
+        <div class="feedback-overlay" id="feedback-overlay">
+            <div class="feedback-modal">
+                <!-- El contenido de feedback-subida.hbs se inyectará aquí -->
+                <div id="feedback-solicitud"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tipoSolicitudSelect = document.getElementById('tipo-solicitud');
+            const formBaja = document.getElementById('form-baja');
+            const formModificacion = document.getElementById('form-modificacion');
+
+            tipoSolicitudSelect.addEventListener('change', function() {
+                formBaja.style.display = this.value === 'baja' ? 'block' : 'none';
+                formModificacion.style.display = this.value === 'modificacion' ? 'block' : 'none';
+            });
+
+            // --- Script para manejar el modal de feedback ---
+            const feedbackOverlay = document.getElementById('feedback-overlay');
+            const feedbackContent = document.getElementById('feedback-solicitud');
+
+            // Escuchamos el evento de HTMX después de que el contenido se haya cargado
+            feedbackContent.addEventListener('htmx:afterSwap', function (event) {
+                feedbackOverlay.classList.add('visible'); // Mostramos el modal
+
+                // Buscamos si el contenido insertado tiene un botón de cierre (lo que indica un error)
+                const closeBtn = feedbackContent.querySelector('#close-feedback-btn');
+                if (closeBtn) {
+                    // Si es error, añadimos un listener al botón de cerrar
+                    closeBtn.addEventListener('click', () => feedbackOverlay.classList.remove('visible'));
+                } else {
+                    // Si es éxito, redirigimos después de 1 segundos
+                    setTimeout(() => {
+                        window.location.href = "/";
+                    }, 1000);
+                }
+            });
+        });
+    </script>
+{{/partial}}
+
+{{>templates/layout}}

@@ -1,0 +1,149 @@
+{{! Panel de administración }}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Administración - MetaMapa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .sidebar {
+            background-color: #212529;
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .sidebar a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .sidebar a:hover {
+            color: white;
+        }
+        .content {
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        {{! Sidebar izquierda }}
+        <div class="col-md-3 col-lg-2 sidebar">
+            <h4>Admin Panel</h4>
+            <hr>
+            <a href="/user/admin/">🏠 Home</a>
+            <a href="/user/admin/colecciones">📚 Colecciones</a>
+            <a href="#fuentes">🌐 Fuentes</a>
+            <a href="/user/admin#criterios">⚙️ Criterios de consenso</a>
+            <a href="/user/admin/solicitudes">🗑️ Solicitudes de eliminación</a>
+            <a href="/user/admin#estadisticas">📊 Mostrar estadisticas </a>
+            <a href="/">⬅️ Volver al mapa</a>
+        </div>
+
+        {{! Contenido principal }}
+        <div class="col-md-9 col-lg-10 content">
+            <h2>Fuentes</h2>
+
+            <hr id="fuentes">
+            <h4>⚙️ Configurar Fuentes</h4>
+            <form method="post" action="/admin/fuentes/configurar">
+                <div class="mb-3">
+                    <label for="fuenteUrl" class="form-label">URL de la fuente</label>
+                    <input type="url" id="fuenteUrl" name="fuenteUrl" class="form-control" placeholder="https://..." required>
+                </div>
+                <div class="mb-3">
+                    <label for="coleccionAsociada" class="form-label">Colección asociada</label>
+                    <select id="coleccionAsociada" name="coleccionId" class="form-select">
+                        {{#each colecciones}}
+                            <option value="{{this.id}}">{{this.nombre}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Guardar fuente</button>
+            </form>
+
+            <h4>📚 Fuentes Estaticas</h4>
+            {{#if fuentesEstaticas}}
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Origen</th>
+                        <th>Nombre Archivo</th>
+                        <th>Fecha de carga</th>
+                        <th>Cantidad de hechos</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each fuentesEstaticas}}
+                        <tr>
+                            <td>{{this.id}}</td>
+                            <td>{{this.origen}}</td>
+                            <td>{{this.pathArchivo}}</td>
+                            <td>{{this.fechaCarga}}</td>
+                            <td>{{this.cantidadTotalDeHechos}}</td>
+                        </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            {{else}}
+                <p class="text-muted">No se han generado fuentes estáticas aún.</p>
+            {{/if}}
+
+            <h4>⚡ Fuentes Dinámicas</h4>
+            {{#if fuentesDinamicas}}
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cantidad de hechos</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each fuentesDinamicas}}
+                        <tr>
+                            <td>{{this.id}}</td>
+                            <td>{{this.cantidadTotalDeHechos}}</td>
+                        </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            {{else}}
+                <p class="text-muted">No se han generado fuentes dinámicas aún.</p>
+            {{/if}}
+
+            <h4>🌐 Fuentes Proxy</h4>
+            {{#if fuentesProxy}}
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cantidad de hechos</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each fuentesProxy}}
+                        <tr>
+                            <td>{{this.id}}</td>
+                            <td>{{this.cantidadTotalDeHechos}}</td>
+                        </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            {{else}}
+                <p class="text-muted">No se han generado fuentes proxy aún.</p>
+            {{/if}}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

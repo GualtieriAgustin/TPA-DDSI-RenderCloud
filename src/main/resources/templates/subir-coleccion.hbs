@@ -1,0 +1,113 @@
+{{! Panel de administración }}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Administración - MetaMapa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .sidebar {
+            background-color: #212529;
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .sidebar a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .sidebar a:hover {
+            color: white;
+        }
+        .content {
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        {{! Sidebar izquierda }}
+        <div class="col-md-3 col-lg-2 sidebar">
+            <h4>Admin Panel</h4>
+            <hr>
+            <a href="/user/admin/">🏠 Home</a>
+            <a href="/user/admin/colecciones">📚 Colecciones</a>
+            <a href="/user/admin/fuentes">🌐 Fuentes</a>
+            <a href="/user/admin/#criterios">⚙️ Criterios de consenso</a>
+            <a href="/user/admin/solicitudes">🗑️ Solicitudes de eliminación</a>
+            <a href="/user/admin/#estadisticas">📊 Mostrar estadisticas </a>
+            <a href="/">⬅️ Volver al mapa</a>
+        </div>
+
+        {{! Contenido principal }}
+        <div class="col-md-9 col-lg-10 content">
+            <h2>Colecciones</h2>
+
+            <hr id="colecciones">
+            <h4>📚 Crear Colección</h4>
+            <form method="post" action="/user/admin/colecciones">
+
+                <div class="mb-3">
+                    <label for="titulo" class="form-label">Nombre de la colección</label>
+                    <input type="text" id="titulo" name="titulo" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="descripcion" class="form-label">Descripción</label>
+                    <textarea id="descripcion" name="descripcion" class="form-control" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="fuenteId" class="form-label">Fuente</label>
+                    <select id="fuenteId" name="fuenteId" class="form-select" required>
+                        <option value="">Seleccionar fuente...</option>
+                        {{#each fuentes}}
+                            <option value="{{this.id}}">{{this.id}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="criterioId" class="form-label">Criterio de pertenencia</label>
+                    <select id="criterioId" name="criterioId" class="form-select" required>
+                        <option value="">Seleccionar criterio...</option>
+                        {{#each criterios}}
+                            <option value="{{this.id}}">{{this.id}}</option>
+                        {{/each}}
+                        <!--                        Agregar N criterios vacios y poner solo el ID en el dropdown-->
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="modo" class="form-label">Modo de Navegación</label>
+                    <select id="modo" name="modo" class="form-select" required>
+                        <option value="IRRESTRICTO">Irrestricto</option>
+                        <option value="CURADO">Curado (basado en consenso)</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="algoritmo" class="form-label">Algoritmo de consenso</label>
+                    <select id="algoritmo" name="algoritmo" class="form-select" required>
+                        <option value="ABSOLUTA">Absoluto</option>
+                        <option value="MAYORIA_SIMPLE">Mayoria simple</option>
+                        <option value="MULTIPLES_MENCIONES">Multiples menciones</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Crear Colección</button>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

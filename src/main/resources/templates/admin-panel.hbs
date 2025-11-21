@@ -1,0 +1,150 @@
+{{! Panel de administración }}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Administración - MetaMapa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .sidebar {
+            background-color: #212529;
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .sidebar a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .sidebar a:hover {
+            color: white;
+        }
+        .content {
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        {{! Sidebar izquierda }}
+        <div class="col-md-3 col-lg-2 sidebar">
+            <h4>Admin Panel</h4>
+            <hr>
+            <a href="/user/admin/">🏠 Home</a>
+            <a href="/user/admin/colecciones">📚 Colecciones</a>
+            <a href="/user/admin/fuentes">🌐 Fuentes</a>
+            <a href="#criterios">⚙️ Criterios de consenso</a>
+            <a href="/user/admin/solicitudes">🗑️ Solicitudes de eliminación</a>
+            <a href="#estadisticas">📊 Mostrar estadisticas </a>
+            <a href="/">⬅️ Volver al mapa</a>
+        </div>
+
+        {{! Contenido principal }}
+        <div class="col-md-9 col-lg-10 content">
+            <h2>Panel de Administración</h2>
+            <p>Desde aquí podés gestionar colecciones, fuentes y solicitudes de eliminación.</p>
+
+            <hr id="criterios">
+            <h4>⚙️ Criterios de Consenso</h4>
+            <form method="post" action="/admin/criterios/guardar">
+                <div class="mb-3">
+                    <label for="criterio" class="form-label">Criterio</label>
+                    <input type="text" id="criterio" name="criterio" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="valor" class="form-label">Valor o umbral</label>
+                    <input type="number" id="valor" name="valor" class="form-control" min="1" required>
+                </div>
+                <button type="submit" class="btn btn-warning">Guardar criterio</button>
+            </form>
+
+            <hr id="solicitudes">
+            <h4>🗑️ Solicitudes de Eliminación Pendientes</h4>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>estado</th>
+                    <th>Descripcion</th>
+                    <th>Acción</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#each solicitudes}}
+                    <tr>
+                        <td>{{this.id}}</td>
+                        <td>{{this.estado}}</td>
+                        <td>{{this.descripcion}}</td>
+                            <td>
+                                <form method="post" action="/admin/solicitudes/{{this.id}}/aprobar" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-success">Aprobar</button>
+                                </form>
+                                <form method="post" action="/admin/solicitudes/{{this.id}}/rechazar" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger">Rechazar</button>
+                                </form>
+                            </td>
+                    </tr>
+                {{else}}
+                    <tr><td colspan="4" class="text-center">No hay solicitudes pendientes.</td></tr>
+                {{/each}}
+                </tbody>
+            </table>
+            <hr id="estadisticas">
+            <h4>📊 Estadísticas del Sistema</h4>
+
+            <form method="post" action="/user/admin/obtenerEstadisticas" class="mb-4">
+
+                <div class="mb-3 d-flex gap-3">
+                    <div class="flex-fill">
+                        <label for="fechaInicio" class="form-label">Fecha de inicio</label>
+                        <input type="datetime-local" id="fechaInicio" name="fechaInicio" class="form-control" required>
+                    </div>
+
+                    <div class="flex-fill">
+                        <label for="fechaFin" class="form-label">Fecha de fin</label>
+                        <input type="datetime-local" id="fechaFin" name="fechaFin" class="form-control" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Generar Estadísticas</button>
+            </form>
+
+            {{#if estadisticas}}
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Consulta</th>
+                        <th>Resultado</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each estadisticas}}
+                        <tr>
+                            <td>{{this.nombre}}</td>
+                            <td>{{this.resultado}}</td>
+                        </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+
+                <form method="post" action="/user/admin/guardarEstadisticas">
+                    <a href="/user/admin/guardarEstadisticas" class="btn btn-primary">
+                        Descargar CSV
+                    </a>
+                </form>
+            {{else}}
+                <p class="text-muted">No se han generado estadísticas aún.</p>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

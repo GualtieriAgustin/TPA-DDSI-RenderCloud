@@ -1,0 +1,48 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand py-2" href="/">
+            <img src="/static/img/favicon-32x32.png" alt="MetaMapa Logo" width="30" height="30" class="me-2">
+            MetaMapa
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link text-nowrap" href="/hechos/formulario">Reportá un hecho</a>
+                </li>
+            </ul>
+            {{> templates/caja-busqueda }}
+            <div class="navbar-nav ms-lg-3 my-3 my-lg-0">
+                {{#if username}}
+                    <a href="/user" class="login-btn text-nowrap text-center">Mi usuario</a>
+                {{else}}
+                    <a href="/login" class="login-btn text-nowrap text-center">Iniciar Sesión</a>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .navbar-nav a.login-btn {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 6px;
+        background-color: #0078d7;
+        color: white;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+    }
+
+    .navbar-nav a.login-btn:hover {
+        background-color: #005fa3;
+        color: white;
+    }
+</style>
+
+<script>
+
+</script>

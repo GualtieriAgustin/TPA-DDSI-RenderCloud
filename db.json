@@ -1,0 +1,32 @@
+{
+  "hechos": [
+    {
+      "titulo": "Incendio en el bosque",
+      "descripcion": "Un incendio afectó 100 hectáreas de bosque.",
+      "categoria": "incendio",
+      "ubicacion": {
+        "latitud": -34.6037,
+        "longitud": -58.3816
+      },
+      "fechaSuceso": "2023-10-01T12:00:00",
+      "origen": "PROXY",
+      "tipo": "TEXTO",
+      "fechaCarga": "2023-10-02T14:00:00",
+      "isActivo": true
+    },
+    {
+      "titulo": "Inundación en la ciudad",
+      "descripcion": "Las lluvias causaron inundaciones en varias zonas.",
+      "categoria": "inundación",
+      "ubicacion": {
+        "latitud": -34.9205,
+        "longitud": -57.9536
+      },
+      "fechaSuceso": "2023-10-03T08:00:00",
+      "origen": "PROXY",
+      "tipo": "TEXTO",
+      "fechaCarga": "2023-10-03T10:00:00",
+      "isActivo": true
+    }
+  ]
+}

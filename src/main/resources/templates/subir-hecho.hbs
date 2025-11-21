@@ -1,0 +1,269 @@
+{{#partial "styles"}}
+    <link rel="stylesheet" href="/static/css/leaflet/leaflet.css">
+    <link rel="stylesheet" href="/static/css/form-hecho.css">
+    <link rel="stylesheet" href="/static/css/autocomplete.css">
+{{/partial}}
+
+{{#partial "scripts"}}
+    <script src="/static/js/jquery-3.7.1.min.js"></script>
+    <script src="/static/js/jquery-ui.min.js"></script>
+    <script src="/static/js/autocomplete.js"></script>
+{{/partial}}
+
+{{#partial "contenido"}}
+    <div class="container mt-5 mb-5">
+        <h2 class="mb-4">Reportá un hecho</h2>
+        <form id="form-subir-hecho" action="/hechos" method="post" enctype="multipart/form-data" hx-post="/hechos"
+              hx-target="#feedback-subida" hx-swap="innerHTML">
+            <div class="mb-3">
+                <label for="titulo" class="form-label">Título</label>
+                <input type="text" class="form-control" id="titulo" name="titulo" required>
+            </div>
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <textarea class="form-control" maxlength="255" id="descripcion" name="descripcion" rows="3"
+                          required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="categoria" class="form-label">Categoría</label>
+                <input type="text" class="form-control" id="categoria" name="categoria" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Ubicación del Suceso</label>
+                <button type="button" id="geolocate-btn" class="btn btn-outline-secondary btn-sm d-block mb-2">📍 Usar mi ubicación actual</button>
+                <small class="form-text text-muted mb-2 d-block">O hacé clic en el mapa para seleccionar manualmente.</small>
+                <div id="map-form"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="latitud" class="form-label">Latitud</label>
+                    <input type="number" step="any" class="form-control" id="latitud" name="latitud" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="longitud" class="form-label">Longitud</label>
+                    <input type="number" step="any" class="form-control" id="longitud" name="longitud" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="fechaSuceso" class="form-label">Fecha y Hora del Suceso</label>
+                <input type="datetime-local" class="form-control" id="fechaSuceso" name="fechaSuceso" required>
+            </div>
+            <div class="mb-3">
+                <label for="provincia" class="form-label">Provincia</label>
+                <select class="form-select" id="provincia" name="provincia" required>
+                    <option value="" disabled selected>Seleccione una provincia</option>
+                    {{#each provincias}}
+                        <option value="{{this.value}}">{{this.nombre}}</option>
+                    {{/each}}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="multimedias" class="form-label">Archivos multimedia</label>
+                <input type="file" class="form-control" id="multimedias" name="multimedias" multiple>
+                <small class="form-text text-muted mt-1">Tamaño máximo total: 25 MB.</small>
+                <div id="multimedia-descriptions-container" class="mt-2"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Reportar hecho</button>
+        </form>
+
+        <!-- Modal de Feedback (oculto por defecto) -->
+        <div class="feedback-overlay" id="feedback-overlay">
+            <div class="feedback-modal">
+                <!-- El contenido de feedback-subida.hbs se inyectará aquí -->
+                <div id="feedback-subida">
+                    <!-- Contenedor para el spinner de carga -->
+                    <div id="feedback-spinner" style="display: none;">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-3">Procesando...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/static/js/leaflet.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // --- Script para establecer la fecha y hora actual por defecto ---
+                const now = new Date();
+                const timezoneOffset = now.getTimezoneOffset() * 60000; // offset en milisegundos
+                const localISOTime = new Date(now - timezoneOffset).toISOString().slice(0, 16);
+                document.getElementById('fechaSuceso').value = localISOTime;
+
+                // --- Script para el mapa interactivo del formulario ---
+                const latInput = document.getElementById('latitud');
+                const lonInput = document.getElementById('longitud');
+                const provinciaSelect = document.getElementById('provincia');
+
+                // Inicializamos el mapa centrado en Argentina
+                const map = L.map('map-form').setView([-37.3, -64.1], 4);
+                L.tileLayer('https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/{z}/{x}/{-y}.png').addTo(map);
+
+                let marker;
+
+                // Función que se ejecuta al hacer clic en el mapa
+                function onMapClick(e) {
+                    const { lat, lng } = e.latlng;
+                    latInput.value = lat.toFixed(6); // Rellenamos el campo de latitud
+                    lonInput.value = lng.toFixed(6); // Rellenamos el campo de longitud
+
+                    // Si ya existe un marcador, lo movemos. Si no, lo creamos.
+                    if (marker) {
+                        marker.setLatLng(e.latlng);
+                    } else {
+                        marker = L.marker(e.latlng).addTo(map);
+                    }
+
+                    // Llamada a la API de Nominatim para obtener la provincia (geocodificación inversa)
+                    fetch(`/provincia/buscar?lat=${lat}&lon=${lng}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data && data.nombre) {
+                                    const provinciaNombre = data.nombre;
+
+                                    // Buscamos la opción en el select que coincida con el nombre de la provincia
+                                    for (let i = 0; i < provinciaSelect.options.length; i++) {
+                                        const option = provinciaSelect.options[i];
+                                        // Comparamos el texto de la opción con el nombre de la provincia devuelto por la API
+                                        if (option.text === provinciaNombre) {
+                                            provinciaSelect.value = data.value; // Seleccionamos la provincia usando el 'value'
+                                            break;
+                                        }
+                                    }
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error al obtener la provincia:', error);
+                                // Si falla, podemos resetear la selección para que el usuario elija manualmente
+                                provinciaSelect.value = "";
+                            });
+                }
+
+                map.on('click', onMapClick);
+
+                // --- Script para el botón de geolocalización ---
+                const geolocateBtn = document.getElementById('geolocate-btn');
+                geolocateBtn.addEventListener('click', function() {
+                    if (!navigator.geolocation) {
+                        alert('La geolocalización no es soportada por tu navegador.');
+                        return;
+                    }
+
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const latlng = L.latLng(lat, lng);
+
+                        map.setView(latlng, 15); // Centramos el mapa en la ubicación con un zoom más cercano
+                        map.fire('click', { latlng: latlng }); // Simulamos un clic para reutilizar la lógica
+
+                    }, function() {
+                        alert('No se pudo obtener tu ubicación. Asegurate de haber dado los permisos necesarios.');
+                    });
+                });
+
+                // --- Script para generar campos de descripción para archivos multimedia ---
+                let selectedFiles = []; // Array para mantener los archivos acumulados
+                const fileInput = document.getElementById('multimedias');
+                const descriptionsContainer = document.getElementById('multimedia-descriptions-container');
+
+                function renderFileList() {
+                    descriptionsContainer.innerHTML = '';
+                    selectedFiles.forEach((file, index) => {
+                        const fileDescriptionDiv = document.createElement('div');
+                        fileDescriptionDiv.className = 'input-group input-group-sm mb-2';
+                        fileDescriptionDiv.innerHTML = `
+                            <span class="input-group-text filename-display" title="${file.name}">${file.name}</span>
+                            <input type="text" class="form-control" name="multimedia_descripciones" maxlength="130" placeholder="Añadir una descripción..." value="${file.description || ''}">
+                            <button type="button" class="btn btn-outline-danger btn-sm" data-index="${index}">&times;</button>
+                        `;
+                        descriptionsContainer.appendChild(fileDescriptionDiv);
+                    });
+
+                    // Guardamos las descripciones en el array
+                    descriptionsContainer.querySelectorAll('input[name="multimedia_descripciones"]').forEach((input, index) => {
+                        input.addEventListener('input', (e) => {
+                            selectedFiles[index].description = e.target.value;
+                        });
+                    });
+
+                    // Añadimos listeners a los botones de eliminar
+                    descriptionsContainer.querySelectorAll('.btn-outline-danger').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const indexToRemove = parseInt(e.target.getAttribute('data-index'), 10);
+                            // Eliminamos el archivo de nuestra lista
+                            selectedFiles.splice(indexToRemove, 1);
+                            // Volvemos a renderizar la lista actualizada
+                            renderFileList();
+                        });
+                    });
+                }
+
+                fileInput.addEventListener('change', function (event) {
+                    const MAX_TOTAL_SIZE = 25_000_000; // 25 MB
+                    const currentTotalSize = selectedFiles.reduce((total, file) => total + file.size, 0);
+                    const incomingFiles = Array.from(event.target.files);
+                    let newFiles = [];
+                    let newSize = 0;
+
+                    for (const file of incomingFiles) {
+                        if (currentTotalSize + newSize + file.size > MAX_TOTAL_SIZE) {
+                            alert(`No se puede añadir "${file.name}". Se superaría el límite total de 25 MB.`);
+                            break; // Detenemos la adición de más archivos
+                        }
+                        newFiles.push(file);
+                        newSize += file.size;
+                    }
+
+                    // Añadimos los nuevos archivos a nuestra lista
+                    selectedFiles.push(...newFiles);
+                    event.target.value = '';
+                    renderFileList();
+                });
+
+                // --- Script para interceptar el envío de HTMX y adjuntar todos los archivos ---
+                document.body.addEventListener('htmx:configRequest', function (evt) {
+                    // Nos aseguramos de que el evento es para nuestro formulario
+                    if (evt.detail.path === '/hechos' && evt.detail.verb === 'post') {
+                        // Adjuntamos los archivos de nuestra lista al FormData
+                        selectedFiles.forEach(file => {
+                            evt.detail.parameters.append('multimedias', file, file.name);
+                        });
+                    }
+                });
+
+                // --- Script para manejar el modal de feedback ---
+                const feedbackOverlay = document.getElementById('feedback-overlay');
+                const feedbackSpinner = document.getElementById('feedback-spinner');
+                const feedbackContent = document.getElementById('feedback-subida');
+                const form = document.getElementById('form-subir-hecho');
+                const fdbkSubida = document.getElementById('feedback-subida');
+
+                // 1. Antes de que la petición HTMX se envíe
+                form.addEventListener('htmx:beforeRequest', function () {
+                    feedbackSpinner.style.display = 'block'; // Mostramos el spinner
+                    feedbackOverlay.classList.add('visible'); // Mostramos el modal
+                });
+
+                // 2. Después de que el contenido de la respuesta se haya insertado
+                fdbkSubida.addEventListener('htmx:afterSwap', function (event) {
+                    feedbackSpinner.style.display = 'none'; // Ocultamos el spinner
+
+                    // Buscamos si el contenido insertado tiene un botón de cierre (lo que indica un error)
+                    const closeBtn = feedbackContent.querySelector('#close-feedback-btn');
+                    if (closeBtn) {
+                        // Si es error, añadimos un listener al botón de cerrar
+                        closeBtn.addEventListener('click', () => feedbackOverlay.classList.remove('visible'));
+                    } else {
+                        // Si es éxito, redirigimos después de 1 segundos
+                        setTimeout(() => {
+                            window.location.href = "/";
+                        }, 1000);
+                    }
+                });
+            });
+        </script>
+    </div>
+{{/partial}}
+
+{{>templates/layout}}

@@ -1,0 +1,208 @@
+<style>
+    body {
+        margin: 0;
+        font-family: "Segoe UI", Roboto, Arial, sans-serif;
+        background: #f7f8fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    #login-panel {
+        width: 380px;
+        background: white;
+        border: 1px solid #d0d4d9;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 30px 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #login-panel h2 {
+        text-align: center;
+        color: #2c3e50;
+        font-weight: 600;
+        margin: 0 0 20px;
+        font-size: 1.5em;
+        border-bottom: 2px solid #0078d7;
+        padding-bottom: 8px;
+        width: 100%;
+    }
+
+    #loginForm {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    label {
+        display: block;
+        font-size: 0.9em;
+        color: #555;
+        margin-bottom: 6px;
+        font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #cbd0d6;
+        border-radius: 6px;
+        font-size: 0.95em;
+        outline: none;
+        transition: border-color 0.2s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+        border-color: #0078d7;
+        box-shadow: 0 0 3px rgba(0, 120, 215, 0.3);
+    }
+
+    #loginForm button[type="submit"] {
+        background-color: #0078d7;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 0;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        margin-top: 5px;
+    }
+
+    #loginForm button[type="submit"]:hover {
+        background-color: #005fa3;
+    }
+
+    #loginForm button[type="button"] {
+        background-color: #e1e5ea;
+        color: #333;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 0;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        margin-top: 8px;
+    }
+
+    #loginForm button[type="button"]:hover {
+        background-color: #d0d4d9;
+    }
+
+    .error-message {
+        color: #d32f2f;
+        background-color: #fdecea;
+        padding: 8px;
+        border-radius: 5px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    #loginForm a {
+        display: block;
+        text-align: center;
+        background-color: #f3f4f6;
+        color: #0078d7;
+        border: 2px solid #0078d7;
+        border-radius: 6px;
+        padding: 10px 0;
+        font-size: 1em;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 10px;
+    }
+
+    #loginForm a:hover {
+        background-color: #0078d7;
+        color: white;
+    }
+    .info-message {
+        color: #007aa3;
+        background-color: #fdecea;
+        padding: 8px;
+        border-radius: 5px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div id="login-panel">
+    <h2>Inicio de sesión</h2>
+    <form id="loginForm" action="/login" method="post">
+        {{#if error}}
+            <div class="error-message">{{error}}</div>
+        {{/if}}
+        {{#if info}}
+            <div class="info-message">{{info}}</div>
+        {{/if}}
+        <div class="form-group">
+            <label for="username">Usuario:</label>
+            <input type="text" id="username" name="username" placeholder="Ingresa tu usuario" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required>
+        </div>
+        <button type="submit">Entrar</button>
+        <a href="/register">Registrarme</a>
+        {{#if redirectUrl}}
+            <input type="hidden" name="redirect" value="{{redirectUrl}}">
+        {{/if}}
+        <a href="/">Volver</a>
+    </form>
+</div>
+
+<script>
+    async function sha256Hex(text) {
+        const data = new TextEncoder().encode(text);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("loginForm");
+        const pwd = document.getElementById("password");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const password = pwd.value;
+            if (!password) {
+                form.submit();
+                return;
+            }
+
+            // 1. Calcular hash
+            const hash = await sha256Hex(password);
+
+            // 2. Quitar password del payload
+            pwd.removeAttribute("name");
+            pwd.value = ""; // opcional: limpia el campo
+
+            // 3. Agregar campo oculto con el hash
+            let hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = "passwordHash";
+            hidden.value = hash;
+            form.appendChild(hidden);
+
+            // 4. Enviar formulario normalmente
+            form.submit();
+        });
+    });
+</script>

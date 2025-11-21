@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://java.sun.com/xml/ns/persistence"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+             http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+
+    <persistence-unit name="simple-persistence-unit" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <properties>
+
+            <property name="hibernate.archive.autodetection" value="class"/>
+
+            <!-- DRIVER -->
+            <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
+
+            <!-- URL CORRECTA -->
+            <property name="hibernate.connection.url"
+                      value="jdbc:postgresql://dpg-d4g7sos9c44c73d7ms60-a.oregon-postgres.render.com:5432/clouddb_rc1c?sslmode=require"/>
+
+            <property name="hibernate.connection.username" value="clouddb_rc1c_user"/>
+            <property name="hibernate.connection.password" value="wdXgw1VTi8FSVxZCiXnZ9q61wrns9mDe"/>
+
+            <property name="hibernate.dialect"
+                      value="ar.edu.utn.frba.dds.persistencia.dialect.PostgreFullTextSearchDialect"/>
+
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="use_sql_comments" value="true"/>
+
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+        </properties>
+
+    </persistence-unit>
+
+</persistence>

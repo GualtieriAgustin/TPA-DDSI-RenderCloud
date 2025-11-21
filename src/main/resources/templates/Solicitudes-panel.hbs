@@ -1,0 +1,79 @@
+{{! Panel de administración }}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Administración - MetaMapa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .sidebar {
+            background-color: #212529;
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .sidebar a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .sidebar a:hover {
+            color: white;
+        }
+        .content {
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        {{! Sidebar izquierda }}
+        <div class="col-md-3 col-lg-2 sidebar">
+            <h4>Admin Panel</h4>
+            <hr>
+            <a href="/user/admin/">🏠 Home</a>
+            <a href="/user/admin/colecciones">📚 Colecciones</a>
+            <a href="/user/admin/fuentes">🌐 Fuentes</a>
+            <a href="/user/admin#criterios">⚙️ Criterios de consenso</a>
+            <a href="#solicitudes">🗑️ Solicitudes de eliminación</a>
+            <a href="/user/admin/#estadisticas">📊 Mostrar estadisticas </a>
+            <a href="/">⬅️ Volver al mapa</a>
+        </div>
+
+        {{! Contenido principal }}
+        <div class="col-md-9 col-lg-10 content">
+            <h2>Panel de Administración</h2>
+            <hr id="solicitudes">
+            <h4>🗑️ Solicitudes de Eliminación</h4>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>estado</th>
+                    <th>Descripcion</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#each solicitudes}}
+                    <tr>
+                        <td>{{this.id}}</td>
+                        <td>{{this.estado}}</td>
+                        <td>{{this.descripcion}}</td>
+                    </tr>
+                {{else}}
+                    <tr><td colspan="4" class="text-center">No hay solicitudes pendientes.</td></tr>
+                {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

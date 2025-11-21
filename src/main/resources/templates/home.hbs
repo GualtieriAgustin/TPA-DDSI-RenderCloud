@@ -1,0 +1,33 @@
+{{#partial "styles"}}
+    <link rel="stylesheet" href="/static/css/leaflet/leaflet.css">
+    <link rel="stylesheet" href="/static/css/mapa.css">
+    <link rel="stylesheet" href="/static/css/autocomplete.css">
+    <link rel="stylesheet" href="/static/css/panel-lateral.css">
+{{/partial}}
+
+{{#partial "scripts"}}
+    <script src="/static/js/jquery-3.7.1.min.js"></script>
+    <script src="/static/js/jquery-ui.min.js"></script>
+    <script src="/static/js/autocomplete.js"></script>
+    <script src="/static/js/leaflet.js"></script>
+    <script src="/static/js/mapa.js"></script>
+{{/partial}}
+
+{{#partial "contenido"}}
+    {{> templates/panel-lateral }}
+
+    <div id="map-container">
+        <div id="map"></div>
+    </div>
+
+    <script id="hechos-json-data" type="application/json">
+        {{{json hechos}}}
+
+    </script>
+
+    <script>
+
+    </script>
+{{/partial}}
+
+{{>templates/layout}}

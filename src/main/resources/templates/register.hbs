@@ -1,0 +1,212 @@
+<style>
+    body {
+        margin: 0;
+        font-family: "Segoe UI", Roboto, Arial, sans-serif;
+        background: #f7f8fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    #register-panel {
+        width: 400px;
+        background: white;
+        border: 1px solid #d0d4d9;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 30px 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #register-panel h2 {
+        text-align: center;
+        color: #2c3e50;
+        font-weight: 600;
+        margin: 0 0 20px;
+        font-size: 1.5em;
+        border-bottom: 2px solid #0078d7;
+        padding-bottom: 8px;
+        width: 100%;
+    }
+
+    #registerForm {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    label {
+        display: block;
+        font-size: 0.9em;
+        color: #555;
+        margin-bottom: 6px;
+        font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #cbd0d6;
+        border-radius: 6px;
+        font-size: 0.95em;
+        outline: none;
+        transition: border-color 0.2s ease;
+    }
+
+    input:focus {
+        border-color: #0078d7;
+        box-shadow: 0 0 3px rgba(0, 120, 215, 0.3);
+    }
+
+    #registerForm button[type="submit"] {
+        background-color: #0078d7;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 0;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        margin-top: 5px;
+    }
+
+    #registerForm button[type="submit"]:hover {
+        background-color: #005fa3;
+    }
+
+    #registerForm a {
+        display: block;
+        text-align: center;
+        background-color: #f3f4f6;
+        color: #0078d7;
+        border: 2px solid #0078d7;
+        border-radius: 6px;
+        padding: 10px 0;
+        font-size: 1em;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 10px;
+    }
+
+    #registerForm a:hover {
+        background-color: #0078d7;
+        color: white;
+    }
+    .error-message {
+        color: #d32f2f;
+        background-color: #fdecea;
+        padding: 8px;
+        border-radius: 5px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    .info-message {
+        color: #007aa3;
+        background-color: #fdecea;
+        padding: 8px;
+        border-radius: 5px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div id="register-panel">
+    <h2>Registro de Usuario</h2>
+    {{#if error}}
+        <div class="error-message">{{error}}</div>
+    {{/if}}
+    {{#if info}}
+        <div class="info-message">{{info}}</div>
+    {{/if}}
+    <form id="registerForm" action="/register" method="post">
+        <div class="form-group">
+            <label for="fullname">Nombre completo:</label>
+            <input type="text" id="fullname" name="fullname" placeholder="Tu nombre completo" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Correo electrónico:</label>
+            <input type="email" id="email" name="email" placeholder="Ejemplo: usuario@correo.com" required>
+        </div>
+        <div class="form-group">
+            <label for="username">Nombre de usuario:</label>
+            <input type="text" id="username" name="username" placeholder="Elige un usuario" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" placeholder="Crea una contraseña" required>
+        </div>
+        <div class="form-group">
+            <label for="confirm-password">Confirmar contraseña:</label>
+            <input type="password" id="confirm-password" name="confirm-password" placeholder="Repite tu contraseña" required>
+        </div>
+        <button type="submit">Registrarse</button>
+        <a href="/login">Iniciar sesion</a>
+    </form>
+</div>
+
+<script>
+    async function sha256Hex(text) {
+        const data = new TextEncoder().encode(text);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("registerForm");
+        const pwd = document.getElementById("password");
+        const pwd2 = document.getElementById("confirm-password");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            // Remover errores previos
+            const existingError = document.querySelector(".error-message");
+            if (existingError) existingError.remove();
+
+            // Validación: contraseñas iguales
+            if (pwd.value !== pwd2.value) {
+                // Crear mensaje como el del backend
+                const errorDiv = document.createElement("div");
+                errorDiv.className = "error-message";
+                errorDiv.textContent = "Las contraseñas no coinciden";
+
+                // Insertarlo arriba del form (igual que el backend)
+                form.parentElement.insertBefore(errorDiv, form);
+
+                return; // No enviar el form
+            }
+
+            // Hash
+            const hash = await sha256Hex(pwd.value);
+
+            // Evitar enviar la password original
+            pwd.removeAttribute("name");
+            pwd2.removeAttribute("name");
+            pwd.value = "";
+            pwd2.value = "";
+
+            // Campo oculto con hash
+            const hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = "passwordHash";
+            hidden.value = hash;
+            form.appendChild(hidden);
+
+            // Enviar formulario
+            form.submit();
+        });
+    });
+</script>

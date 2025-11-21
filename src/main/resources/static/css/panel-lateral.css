@@ -1,0 +1,118 @@
+#panel-lateral {
+    position: fixed;
+    left: 0;
+    height: calc(100vh - 56px);
+    background-color: white;
+    border-right: 1px solid #ddd;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1010;
+    display: flex;
+    flex-direction: column;
+    overscroll-behavior: contain;
+}
+
+#panel-lateral {
+    width: 370px;
+}
+
+@media (max-width: 767px) {
+    #panel-lateral {
+        width: 90vw;
+        max-width: 320px;
+    }
+}
+
+#panel-lateral.visible {
+    transform: translateX(0);
+}
+
+.panel-header {
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.panel-header h4 {
+    margin: 0;
+}
+
+.panel-body {
+    padding: 0;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.panel-footer {
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+
+.list-group-item .bi {
+    margin-right: 0.75rem;
+    color: var(--bs-secondary-color);
+}
+
+.panel-toggle {
+    position: absolute;
+    top: 50%;
+    right: -30px;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 60px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.panel-toggle i {
+    transition: transform 0.3s ease-in-out;
+}
+
+#panel-lateral:not(.visible) .panel-toggle i {
+    transform: rotate(180deg);
+}
+
+.carousel-item img, .carousel-item video {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.carousel-caption {
+    position: static;
+    padding: 0.75rem 1rem;
+    color: var(--bs-body-color);
+    text-align: left;
+    background-color: #f8f9fa;
+}
+
+.carousel-caption h5 {
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    top: 50%;
+    transform: translateY(-50%);
+    height: 40px;
+    width: 40px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+}
+
+.carousel-control-prev {
+    left: 10px;
+}
+
+.carousel-control-next {
+    right: 10px;
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>MetaMapa Grupo 24</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
+    {{#block "styles"}}
+    {{/block}}
+</head>
+<body class="d-flex flex-column vh-100">
+{{> templates/navbar }}
+<main role="main" class="d-flex flex-grow-1">
+    {{#block "contenido"}}
+    {{/block}}
+</main>
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/htmx.min.js"></script>
+{{#block "scripts"}}
+{{/block}}
+</body>
+</html>

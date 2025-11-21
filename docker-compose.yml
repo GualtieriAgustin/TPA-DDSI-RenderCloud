@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Proxy reverso
+  nginx:
+    image: nginx:latest  # Usa la imagen oficial de Nginx
+    container_name: nginx_proxy
+    restart: always
+    ports:
+      - "80:80"    # Expone el puerto 80 al MUNDO EXTERIOR
+      - "443:443"  # Opcional, para HTTPS a futuro
+    volumes:
+      # Monta tu archivo de config dentro del contenedor
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      # Montamos el directorio de letsencrypt de la VM para acceder a los certificados
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      # Montamos las opciones de SSL en una carpeta separada para evitar conflictos
+      - ./nginx_ssl_options/options-ssl-nginx.conf:/etc/nginx/ssl/options-ssl-nginx.conf:ro
+      - ./nginx_ssl_options/ssl-dhparams.pem:/etc/nginx/ssl/ssl-dhparams.pem:ro
+    depends_on:
+      - server  # Se asegura de arrancar después de tu app
+  # Servicio de la aplicación Java (servidor)
+  server:
+    # Construye la imagen a partir del Dockerfile en el directorio actual
+    image: us-east1-docker.pkg.dev/metamapa-477204/metamapa-repo/metamapa:latest
+    # Reinicia el contenedor si falla
+    restart: always
+    # Mapea el puerto 9001 del contenedor al puerto 9001 de la máquina host
+    expose:
+      - "9001"
+    # Define las variables de entorno para la conexión a la base de datos
+    # Tu aplicación deberá leer estas variables para configurar la persistencia (JPA)
+    environment:
+      - db_url=jdbc:postgresql://db:5432/prueba
+      - db_username=postgres
+      - db_password=clave_supersegura
+    # Define los volúmenes para persistir los archivos subidos
+    volumes:
+      - ./uploads:/app/uploads
+    # Depende del servicio de la base de datos, se iniciará después de 'db'
+    depends_on:
+      - db
+
+  # Servicio de la base de datos PostgreSQL
+  db:
+    # Usa la imagen oficial de PostgreSQL
+    image: postgres:15
+    # Reinicia el contenedor si falla
+    restart: always
+    # Define las variables de entorno para configurar la base de datos
+    environment:
+      - POSTGRES_DB=prueba
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=clave_supersegura
+    # Mapea el puerto 5432 del contenedor al 5432 del host (opcional, para debugging)
+    ports:
+      - "5432:5432"
+    # Define volúmenes:
+    # 1. Para que los datos de la base de datos persistan.
+    # 2. Para ejecutar scripts de inicialización al crear la BD por primera vez.
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+# Define el volumen nombrado para los datos de PostgreSQL
+volumes:
+  postgres_data:

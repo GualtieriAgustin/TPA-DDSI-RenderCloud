@@ -1,0 +1,131 @@
+/* Contenedor para la búsqueda, necesario para posicionar el dropdown */
+.search-container {
+    position: relative;
+}
+
+.ui-autocomplete {
+    /* Posicionamiento para que flote sobre el contenido (mapa) */
+    position: absolute;
+    z-index: 1050; /* Un valor alto para asegurar que esté por encima de otros elementos */
+    box-sizing: border-box; /* El ancho incluirá padding y borde */
+
+    /* Apariencia */
+    max-height: 315px;
+    overflow-y: auto;
+    background-color: #fff;
+    border: 1px solid #e0e0e0; /* Borde más suave */
+    border-radius: 8px; /* Bordes más redondeados */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+
+    overflow-x: hidden;
+    width: calc(100% - var(--bs-navbar-nav-link-padding-x) * 2); /* Ajusta al ancho del form, descontando el me-2 */
+}
+
+/* Reseteo del <ul> que crea jQuery UI */
+.ui-autocomplete.ui-menu {
+    padding-left: 0;
+    list-style: none;
+}
+
+/* Reseteo del <li> que crea jQuery UI */
+.ui-menu-item {
+    margin: 0;
+}
+
+/* Wrapper que jQuery UI pone en cada item */
+.ui-menu-item .ui-menu-item-wrapper {
+    padding: 0;
+    margin: 0;
+    border: none; /* Quitamos cualquier borde por defecto */
+
+    /* Reseteamos el estado activo de jQuery UI */
+    /* Esto evita el fondo azul y el texto blanco */
+    background: none;
+    color: inherit;
+}
+
+/* Reseteo explícito del estado activo */
+/* Esto elimina 100% el "flash azul" */
+.ui-menu-item .ui-menu-item-wrapper.ui-state-active {
+    background: none;
+    border: none;
+    color: inherit;
+    margin: 0;
+}
+
+/* Nuestro div personalizado para cada sugerencia */
+.autocomplete-suggestion {
+    /* MODIFICADO: Aumentamos padding vertical (altura) y horizontal (margen) */
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    display: flex; /* Usamos flex para alinear el ícono y el texto */
+    align-items: center;
+    color: #212529; /* Color de texto oscuro por defecto */
+}
+
+/* Quitar el borde (no es necesario si los items no tienen borde) */
+.ui-menu .ui-menu-item:last-child .autocomplete-suggestion {
+    border-bottom: none;
+}
+
+/* Estilo unificado para hover (mouse) Y active (teclado) */
+/* Aplicamos el estilo a *nuestro* div, no al wrapper */
+.ui-menu-item:hover .autocomplete-suggestion,
+.ui-menu-item .ui-menu-item-wrapper.ui-state-active .autocomplete-suggestion {
+    background-color: #f5f5f5; /* Un gris neutro y sobrio */
+    color: #212529; /* Aseguramos que el texto siga oscuro */
+}
+
+/* Aseguramos que el título NO se ponga blanco */
+.ui-menu-item:hover .suggestion-title,
+.ui-menu-item .ui-menu-item-wrapper.ui-state-active .suggestion-title {
+    color: #212529; /* O 'inherit' si el padre ya está oscuro */
+}
+
+/* Estilo para el mensaje de "sin resultados" */
+.ui-autocomplete-no-results div {
+    padding: 10px 15px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Contenedor para el texto, para controlar el desbordamiento */
+.suggestion-text-content {
+    overflow: hidden; /* Crucial para que el ellipsis funcione en los hijos */
+    white-space: nowrap; /* Evita que el contenido se divida en varias líneas */
+}
+
+.suggestion-icon {
+    font-size: 1.2rem;
+    margin-right: 1rem;
+    color: #6c757d;
+}
+
+.suggestion-title {
+    display: block; /* Asegura que ocupen su propia línea y se puedan truncar */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.suggestion-description {
+    display: block; /* Asegura que ocupen su propia línea y se puedan truncar */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.96rem;
+    width: 100%;
+}
+
+.suggestion-icon {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-right: 1rem;
+    margin-left: 0.5rem;
+}
+
+#boton-buscar {
+    margin-left: 10px;
+}
