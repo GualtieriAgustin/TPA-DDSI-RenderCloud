@@ -93,7 +93,7 @@ public class Router implements SimplePersistenceTest {
           + " script-src 'self' 'unsafe-inline';"
           + " style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://code.jquery.com;"
           + " img-src 'self' data: https://wms.ign.gob.ar  https://media.metamapa.com.ar;"
-          + " media-src 'self' https://media.metamapa.com.ar;"
+          + " media-src 'self' https://tpa-ddsi-cloud.onrender.com;"
           + " font-src 'self' https://cdn.jsdelivr.net;"
           + " object-src 'none';"
           + " frame-ancestors 'none';"

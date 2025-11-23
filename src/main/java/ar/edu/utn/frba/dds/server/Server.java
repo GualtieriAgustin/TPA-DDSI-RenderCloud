@@ -61,9 +61,10 @@ public class Server {
       staticFileConfig.location = Location.CLASSPATH;
     });
 
+    // Subidas de archivos
     config.staticFiles.add(staticFileConfig -> {
       staticFileConfig.hostedPath = "/uploads";
-      staticFileConfig.directory = "uploads";
+      staticFileConfig.directory = "/var/data/uploads";  // 🟢 Render filesystem persistente
       staticFileConfig.location = Location.EXTERNAL;
     });
   }
@@ -106,14 +107,16 @@ public class Server {
     AlmacenamientoDeArchivos almacenamientoDeArchivos;
 
     if ("local".equals(almacenamiento)) {
-      almacenamientoDeArchivos = new AlmacenamientoLocal("uploads");
+      almacenamientoDeArchivos = new AlmacenamientoLocal("/var/data/uploads");
     } else {
-      // default
-      almacenamientoDeArchivos = new AlmacenamientoLocal("uploads");
+      almacenamientoDeArchivos = new AlmacenamientoLocal("/var/data/uploads");
     }
 
-    HechosService hechosService = new HechosService(repositorioDeFuentes,
-            repositorioDeHechos, almacenamientoDeArchivos, repositorioDeUsuarios
+    HechosService hechosService = new HechosService(
+            repositorioDeFuentes,
+            repositorioDeHechos,
+            almacenamientoDeArchivos,
+            repositorioDeUsuarios
     );
 
     return new HechosController(hechosService);
