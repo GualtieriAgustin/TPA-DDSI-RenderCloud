@@ -59,6 +59,9 @@ public class AlmacenamientoEnCloudFare implements AlmacenamientoDeArchivos {
                     .bucket(bucketName)
                     .key(nombreUnico)
                     .contentType(mimeType)
+                    .contentDisposition("inline")
+                    .cacheControl("public, max-age=31536000")
+                    .acl("public-read")
                     .build();
 
             s3.putObject(request, RequestBody.fromBytes(bytes));
