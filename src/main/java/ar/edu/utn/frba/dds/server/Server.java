@@ -16,6 +16,7 @@ import ar.edu.utn.frba.dds.dominio.estadisticas.querys.ProvinciaConMasHechos;
 import ar.edu.utn.frba.dds.dominio.estadisticas.querys.ProvinciaConMasHechosPorCategoria;
 import ar.edu.utn.frba.dds.dominio.hechos.geo.BuscadorDeProvincias;
 import ar.edu.utn.frba.dds.dominio.hechos.multimedia.AlmacenamientoDeArchivos;
+import ar.edu.utn.frba.dds.dominio.hechos.multimedia.AlmacenamientoEnGoogleCloud;
 import ar.edu.utn.frba.dds.dominio.hechos.multimedia.AlmacenamientoLocal;
 import ar.edu.utn.frba.dds.dominio.solicitudes.observers.SolicitudBajaObserver;
 import ar.edu.utn.frba.dds.dominio.solicitudes.observers.spam.DetectorDeSpamBasico;
@@ -61,10 +62,9 @@ public class Server {
       staticFileConfig.location = Location.CLASSPATH;
     });
 
-    // Subidas de archivos
     config.staticFiles.add(staticFileConfig -> {
       staticFileConfig.hostedPath = "/uploads";
-      staticFileConfig.directory = "/var/data/uploads";  // 🟢 Render filesystem persistente
+      staticFileConfig.directory = "uploads";
       staticFileConfig.location = Location.EXTERNAL;
     });
   }
@@ -106,17 +106,14 @@ public class Server {
     String almacenamiento = System.getProperty("almacenamiento.archivos");
     AlmacenamientoDeArchivos almacenamientoDeArchivos;
 
-    if ("local".equals(almacenamiento)) {
-      almacenamientoDeArchivos = new AlmacenamientoLocal("/var/data/uploads");
+    if ("google".equals(almacenamiento)) {
+      almacenamientoDeArchivos = new AlmacenamientoEnGoogleCloud("soporte-hechos", "multimedia");
     } else {
-      almacenamientoDeArchivos = new AlmacenamientoLocal("/var/data/uploads");
+      almacenamientoDeArchivos = new AlmacenamientoLocal("/uploads");
     }
 
-    HechosService hechosService = new HechosService(
-            repositorioDeFuentes,
-            repositorioDeHechos,
-            almacenamientoDeArchivos,
-            repositorioDeUsuarios
+    HechosService hechosService = new HechosService(repositorioDeFuentes,
+            repositorioDeHechos, almacenamientoDeArchivos, repositorioDeUsuarios
     );
 
     return new HechosController(hechosService);

@@ -45,7 +45,6 @@ public class AlmacenamientoLocal implements AlmacenamientoDeArchivos {
 
   @Override
   public String getUrlPublica(String nombre) {
-    // Render sirve la carpeta /uploads en la URL /uploads/*
-    return "/uploads/" + nombre;
+    return baseDirectorio + "/" + nombre;
   }
 }
