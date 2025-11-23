@@ -29,8 +29,6 @@ public class AlmacenamientoEnCloudFare implements AlmacenamientoDeArchivos {
         this.bucketName = bucketName;
         this.carpeta = carpeta;
 
-
-
         String endpoint = System.getenv("R2_ENDPOINT");
         String accessKey = System.getenv("R2_ACCESS_KEY");
         String secretKey = System.getenv("R2_SECRET_KEY");
@@ -40,7 +38,7 @@ public class AlmacenamientoEnCloudFare implements AlmacenamientoDeArchivos {
 
         this.s3 = S3Client.builder()
                 .endpointOverride(URI.create(endpoint))
-                .region(Region.US_EAST_1) // R2 usa region "auto" → US_EAST_1 funciona
+                .region(Region.US_EAST_1)
                 .credentialsProvider(StaticCredentialsProvider.create(
                         AwsBasicCredentials.create(accessKey, secretKey)
                 ))
@@ -77,12 +75,9 @@ public class AlmacenamientoEnCloudFare implements AlmacenamientoDeArchivos {
     }
 
     @Override
-    public String getUrlPublica(String key) {
-        // Devuelve URL accesible públicamente en R2
-        return publicBaseUrl + "/" + key;
+    public String getUrlPublica(String url) {
+        return publicBaseUrl + "/" + url;
     }
-
-    // -------- Helpers --------
 
     private String obtenerExtension(String nombreArchivo) {
         return (nombreArchivo != null && nombreArchivo.contains("."))

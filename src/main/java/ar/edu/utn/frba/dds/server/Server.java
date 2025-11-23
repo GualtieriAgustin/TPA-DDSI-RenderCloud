@@ -107,7 +107,7 @@ public class Server {
     String almacenamiento = System.getProperty("almacenamiento.archivos");
     AlmacenamientoDeArchivos almacenamientoDeArchivos;
 
-    if ("CloudFare".equals(almacenamiento)) {
+    if ("cloudfare".equals(almacenamiento)) {
       almacenamientoDeArchivos = new AlmacenamientoEnCloudFare("tpa-ddsi-multimedia","/multimedia");
     } else if ("google".equals(almacenamiento)) {
       almacenamientoDeArchivos = new AlmacenamientoEnGoogleCloud("soporte-hechos", "multimedia");

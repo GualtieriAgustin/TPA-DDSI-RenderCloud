@@ -13,6 +13,7 @@ dev:
 
 # Entorno de Producción (se activa con -Dapp.env=prod)
 prod:
-  hibernate.connection.url: "jdbc:postgresql://10.142.0.3:5432/metamapa"
+  hibernate.connection.url: "jdbc:postgresql://dpg-d4g7sos9c44c73d7ms60-a.oregon-postgres.render.com:5432/clouddb_rc1c?sslmode=require"
+  hibernate.connection.username: "clouddb_rc1c_user"
+  hibernate.connection.password: "wdXgw1VTi8FSVxZCiXnZ9q61wrns9mDe"
   almacenamiento.archivos: "cloudfare"
-  media.url: "https://media.metamapa.com.ar"
