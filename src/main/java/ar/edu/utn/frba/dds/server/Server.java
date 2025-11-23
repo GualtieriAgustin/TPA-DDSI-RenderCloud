@@ -15,7 +15,8 @@ import ar.edu.utn.frba.dds.dominio.estadisticas.querys.HoraConMasHechosPorCatego
 import ar.edu.utn.frba.dds.dominio.estadisticas.querys.ProvinciaConMasHechos;
 import ar.edu.utn.frba.dds.dominio.estadisticas.querys.ProvinciaConMasHechosPorCategoria;
 import ar.edu.utn.frba.dds.dominio.hechos.geo.BuscadorDeProvincias;
-import ar.edu.utn.frba.dds.dominio.hechos.multimedia.AlmacenamientoEnGoogleCloud;
+import ar.edu.utn.frba.dds.dominio.hechos.multimedia.AlmacenamientoDeArchivos;
+import ar.edu.utn.frba.dds.dominio.hechos.multimedia.AlmacenamientoLocal;
 import ar.edu.utn.frba.dds.dominio.solicitudes.observers.SolicitudBajaObserver;
 import ar.edu.utn.frba.dds.dominio.solicitudes.observers.spam.DetectorDeSpamBasico;
 import ar.edu.utn.frba.dds.dominio.solicitudes.observers.spam.DetectorSpamObserver;
@@ -97,18 +98,27 @@ public class Server {
   }
 
   private HechosController crearHechosController(
-      RepositorioDeUsuarios repositorioDeUsuarios,
-      RepositorioDeHechos repositorioDeHechos,
-      RepositorioDeFuentes repositorioDeFuentes) {
-    AlmacenamientoEnGoogleCloud almacenamientoEnGoogleCloud =
-        new AlmacenamientoEnGoogleCloud("soporte-hechos", "multimedia");
+          RepositorioDeUsuarios repositorioDeUsuarios,
+          RepositorioDeHechos repositorioDeHechos,
+          RepositorioDeFuentes repositorioDeFuentes) {
+
+    String almacenamiento = System.getProperty("almacenamiento.archivos");
+    AlmacenamientoDeArchivos almacenamientoDeArchivos;
+
+    if ("local".equals(almacenamiento)) {
+      almacenamientoDeArchivos = new AlmacenamientoLocal("uploads");
+    } else {
+      // default
+      almacenamientoDeArchivos = new AlmacenamientoLocal("uploads");
+    }
 
     HechosService hechosService = new HechosService(repositorioDeFuentes,
-        repositorioDeHechos, almacenamientoEnGoogleCloud, repositorioDeUsuarios
+            repositorioDeHechos, almacenamientoDeArchivos, repositorioDeUsuarios
     );
 
     return new HechosController(hechosService);
   }
+
 
   @SuppressWarnings("checkstyle:WhitespaceAfter")
   public void start() {
