@@ -40,6 +40,16 @@
       <version>2.25.3</version>
     </dependency>
     <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.14</version>
+    </dependency>
+    <dependency>
       <groupId>de.mkammerer</groupId>
       <artifactId>argon2-jvm</artifactId>
       <version>2.11</version>
