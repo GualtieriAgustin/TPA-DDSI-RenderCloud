@@ -21,13 +21,11 @@ public class AlmacenamientoEnCloudFare implements AlmacenamientoDeArchivos {
 
     private final S3Client s3;
     private final String bucketName;
-    private final String carpeta;
     private final String publicBaseUrl;
 
-    public AlmacenamientoEnCloudFare(String bucketName, String carpeta) {
+    public AlmacenamientoEnCloudFare(String bucketName) {
 
         this.bucketName = bucketName;
-        this.carpeta = carpeta;
 
         String endpoint = System.getenv("R2_ENDPOINT");
         String accessKey = System.getenv("R2_ACCESS_KEY");
@@ -52,7 +50,7 @@ public class AlmacenamientoEnCloudFare implements AlmacenamientoDeArchivos {
         String extension = obtenerExtension(nombreArchivoOriginal);
         String mimeType = obtenerMimeType(extension);
 
-        String nombreUnico = carpeta + "/" + UUID.randomUUID() + "." + extension;
+        String nombreUnico = UUID.randomUUID() + "." + extension;
 
         try {
             byte[] bytes = inputStream.readAllBytes();

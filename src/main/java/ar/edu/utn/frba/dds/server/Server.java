@@ -108,7 +108,7 @@ public class Server {
     AlmacenamientoDeArchivos almacenamientoDeArchivos;
 
     if ("cloudfare".equals(almacenamiento)) {
-      almacenamientoDeArchivos = new AlmacenamientoEnCloudFare("tpa-ddsi-multimedia","/multimedia");
+      almacenamientoDeArchivos = new AlmacenamientoEnCloudFare("tpa-ddsi-multimedia");
     } else if ("google".equals(almacenamiento)) {
       almacenamientoDeArchivos = new AlmacenamientoEnGoogleCloud("soporte-hechos", "multimedia");
     } else {
