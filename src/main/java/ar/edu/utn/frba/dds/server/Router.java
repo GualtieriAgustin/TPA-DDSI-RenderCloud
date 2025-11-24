@@ -70,6 +70,49 @@ public class Router implements SimplePersistenceTest {
     app.get("/user/admin/colecciones", coleccionesController::showColecciones);
     app.get("/user/admin/colecciones/formulario", coleccionesController::mostrarFormulario);
     app.post("/user/admin/colecciones", coleccionesController::subirColeccion);
+
+    //Crons
+
+    app.post("/cron/generarEstadisticas", ctx -> {
+      try {
+        String token = ctx.header("X-CRON-TOKEN");
+        if (!"mi-super-token".equals(token)) {
+          ctx.status(401).result("Unauthorized");
+          return;
+        }
+        sessionController.generarEstadisticas(ctx);
+        ctx.result("OK");
+      } catch (Exception e) {
+        e.printStackTrace();
+        ctx.status(500).result("ERROR");
+      }
+    });
+
+    app.post("/cron/renderizarHechos", ctx -> {
+      try {
+        String token = ctx.header("X-CRON-TOKEN");
+        if (!"mi-super-token".equals(token)) {
+          ctx.status(401).result("Unauthorized");
+          return;
+        }
+        hechosController.renderizarHechos(ctx);
+        ctx.result("OK");
+      } catch (Exception e) {
+        e.printStackTrace();
+        ctx.status(500).result("ERROR");
+      }
+    });
+
+    app.post("/cron/calcular-consenso", ctx -> {
+      String token = ctx.header("X-CRON-TOKEN");
+      if (!"mi-super-token".equals(token)) {
+        ctx.status(401).result("Unauthorized");
+        return;
+      }
+
+      //CalcularConsenso.calcular();
+      ctx.result("OK");
+    });
   }
 
   private void configureBefores(Javalin app) {
