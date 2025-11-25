@@ -1,12 +1,8 @@
 package ar.edu.utn.frba.dds.server;
 
-import ar.edu.utn.frba.dds.controlador.ColeccionesController;
-import ar.edu.utn.frba.dds.controlador.FuentesController;
-import ar.edu.utn.frba.dds.controlador.HealthCheckController;
-import ar.edu.utn.frba.dds.controlador.HechosController;
-import ar.edu.utn.frba.dds.controlador.ProvinciasController;
-import ar.edu.utn.frba.dds.controlador.SessionController;
-import ar.edu.utn.frba.dds.controlador.SolicitudesController;
+import ar.edu.utn.frba.dds.controlador.*;
+import ar.edu.utn.frba.dds.dominio.colecciones.NavegadorDeColecciones;
+import ar.edu.utn.frba.dds.dominio.consenso.ServicioDeConsenso;
 import ar.edu.utn.frba.dds.dominio.estadisticas.EstadisticasServiceImpl;
 import ar.edu.utn.frba.dds.dominio.estadisticas.ExportadorCsv;
 import ar.edu.utn.frba.dds.dominio.estadisticas.RepositorioEstadisticas;
@@ -194,6 +190,11 @@ public class Server {
     );
     SolicitudesController solicitudesController = new SolicitudesController(solicitudesService);
 
+    NavegadorDeColecciones navegador = new NavegadorDeColecciones(repositorioSolicitud);
+    ServicioDeConsenso servicioDeConsenso = new ServicioDeConsenso(navegador);
+
+    CronController cronController = new CronController(servicioDeConsenso,repositorioDeFuentes,repositorioDeColecciones);
+
     new Router().configure(
         app,
         hechosController,
@@ -202,7 +203,8 @@ public class Server {
         healthCheckController,
         sessionController,
         fuentesController,
-        coleccionesController
+        coleccionesController,
+        cronController
     );
     app.start(9001);
   }

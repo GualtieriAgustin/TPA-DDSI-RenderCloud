@@ -1,12 +1,8 @@
 package ar.edu.utn.frba.dds.server;
 
-import ar.edu.utn.frba.dds.controlador.ColeccionesController;
-import ar.edu.utn.frba.dds.controlador.FuentesController;
-import ar.edu.utn.frba.dds.controlador.HealthCheckController;
-import ar.edu.utn.frba.dds.controlador.HechosController;
-import ar.edu.utn.frba.dds.controlador.ProvinciasController;
-import ar.edu.utn.frba.dds.controlador.SessionController;
-import ar.edu.utn.frba.dds.controlador.SolicitudesController;
+import ar.edu.utn.frba.dds.controlador.*;
+import ar.edu.utn.frba.dds.dominio.colecciones.NavegadorDeColecciones;
+import ar.edu.utn.frba.dds.dominio.consenso.ServicioDeConsenso;
 import io.github.flbulgarelli.jpa.extras.test.SimplePersistenceTest;
 import io.javalin.Javalin;
 import java.util.List;
@@ -25,7 +21,8 @@ public class Router implements SimplePersistenceTest {
       HealthCheckController healthCheckController,
       SessionController sessionController,
       FuentesController fuentesController,
-      ColeccionesController coleccionesController
+      ColeccionesController coleccionesController,
+      CronController cronController
   ) {
     configureBefores(app);
 
@@ -103,16 +100,8 @@ public class Router implements SimplePersistenceTest {
       }
     });
 
-    app.post("/cron/calcular-consenso", ctx -> {
-      String token = ctx.header("X-CRON-TOKEN");
-      if (!"mi-super-token".equals(token)) {
-        ctx.status(401).result("Unauthorized");
-        return;
-      }
+    app.post("/cron/calcular-consenso",cronController::calcularConsenso);
 
-      //CalcularConsenso.calcular();
-      ctx.result("OK");
-    });
   }
 
   private void configureBefores(Javalin app) {
