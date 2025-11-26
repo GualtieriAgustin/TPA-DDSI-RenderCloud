@@ -85,14 +85,14 @@ public class Router implements SimplePersistenceTest {
       }
     });
 
-    app.post("/cron/renderizarHechos", ctx -> {
+    app.post("/cron/refrescarCaches", ctx -> {
       try {
         String token = ctx.header("X-CRON-TOKEN");
         if (!"mi-super-token".equals(token)) {
           ctx.status(401).result("Unauthorized");
           return;
         }
-        hechosController.renderizarHechos(ctx);
+        fuentesController.refreshCaches();
         ctx.result("OK");
       } catch (Exception e) {
         e.printStackTrace();

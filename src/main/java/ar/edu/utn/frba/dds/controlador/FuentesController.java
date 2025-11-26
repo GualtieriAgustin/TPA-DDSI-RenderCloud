@@ -1,7 +1,9 @@
 package ar.edu.utn.frba.dds.controlador;
 
+import ar.edu.utn.frba.dds.dominio.fuentes.Fuente;
 import ar.edu.utn.frba.dds.dominio.fuentes.FuenteDinamica;
 import ar.edu.utn.frba.dds.dominio.fuentes.FuenteEstatica;
+import ar.edu.utn.frba.dds.dominio.fuentes.cache.FuenteCacheable;
 import ar.edu.utn.frba.dds.dominio.fuentes.proxy.instancias.FuenteMetaMapa;
 import ar.edu.utn.frba.dds.persistencia.RepositorioDeFuentes;
 import ar.edu.utn.frba.dds.persistencia.hecho.RepositorioDeHechos;
@@ -40,5 +42,11 @@ public class FuentesController implements WithSimplePersistenceUnit, Transaction
     modelo.put("fuentesProxy", fuentesProxy);
 
     context.render("fuentes-panel.hbs", modelo);
+  }
+
+  public void refreshCaches(){
+    for(FuenteCacheable fuente : repositorioDeFuentes.buscarPorTipo(FuenteCacheable.class)){
+      fuente.refrescarCache();
+    }
   }
 }
