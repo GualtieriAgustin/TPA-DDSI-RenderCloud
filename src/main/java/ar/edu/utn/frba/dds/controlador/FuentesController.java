@@ -45,8 +45,13 @@ public class FuentesController implements WithSimplePersistenceUnit, Transaction
   }
 
   public void refreshCaches(){
-    for(FuenteCacheable fuente : repositorioDeFuentes.buscarPorTipo(FuenteCacheable.class)){
-      fuente.refrescarCache();
+
+    for(Fuente fuente : repositorioDeFuentes.buscarTodas()){
+      if(!(fuente instanceof FuenteCacheable)) {
+        FuenteCacheable cacheable = (FuenteCacheable) fuente;
+        cacheable.refrescarCache();
+        System.out.println("Refrescado cache de " + fuente.getClass().getSimpleName());
+      }
     }
   }
 }

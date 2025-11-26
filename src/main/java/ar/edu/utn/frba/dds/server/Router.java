@@ -92,8 +92,11 @@ public class Router implements SimplePersistenceTest {
           ctx.status(401).result("Unauthorized");
           return;
         }
+
         fuentesController.refreshCaches();
+
         ctx.result("OK");
+
       } catch (Exception e) {
         e.printStackTrace();
         ctx.status(500).result("ERROR");
