@@ -162,6 +162,7 @@ public class SessionController {
 
     String fechaInicioStr = ctx.formParam("fechaInicio");
     String fechaFinStr = ctx.formParam("fechaFin");
+    String panelStr = ctx.formParam("panel");
 
     // Validación simple
     if (fechaInicioStr == null || fechaFinStr == null) {
@@ -180,7 +181,11 @@ public class SessionController {
     model.put("colecciones", repositorioDeColecciones.consultarTodas());
     model.put("solicitudes", repositorioSolicitud.consultarPendientes());
     model.put("estadisticas", estadisticas);
-    ctx.render("admin-panel.hbs", model);
+    if(panelStr != null && panelStr.equals("true")){
+      ctx.render("estadisticas-panel.hbs", model);
+    }else {
+      ctx.render("admin-panel.hbs", model);
+    }
   }
 
   public void imprimirEstadisticas(@NotNull Context ctx) {
@@ -190,6 +195,21 @@ public class SessionController {
     ctx.header("Content-Disposition", "attachment; filename=reporte.csv");
     ctx.result(csv);
     ctx.contentType("text/csv; charset=utf-8");
+  }
+
+  public void showEstadisticas(@NotNull Context context) {
+    if (context.sessionAttribute("username") == null) {
+      context.redirect("/login");
+    } else {
+      Usuario usuario = repositorioDeUsuarios.buscarUsuario(context.sessionAttribute("username"));
+      if (usuario.getAdmin()) {
+        Map<String, Object> modelo = new HashMap<>();
+        context.render("estadisticas-panel.hbs");
+      } else {
+        context.redirect("/user");
+      }
+    }
+
   }
 
   public void mostrarSolicitudes(@NotNull Context context) {

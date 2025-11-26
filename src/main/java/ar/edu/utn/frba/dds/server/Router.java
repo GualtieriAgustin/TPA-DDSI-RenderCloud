@@ -59,6 +59,7 @@ public class Router implements SimplePersistenceTest {
     app.get("/user/admin", sessionController::showAdmin);
     app.post("/user/admin/obtenerEstadisticas", sessionController::generarEstadisticas);
     app.get("/user/admin/guardarEstadisticas", sessionController::imprimirEstadisticas);
+    app.get("/user/admin/estadisticas", sessionController::showEstadisticas);
 
     // Fuentes
     app.get("/user/admin/fuentes", fuentesController::showFuentes);
